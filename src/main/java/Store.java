@@ -1,7 +1,7 @@
 
 public class Store {
     private static final Store store = new Store();
-    private volatile int goods = 1000;
+    private int goods = 1000;
     private int maxPurchases;
 
     private Store() {
