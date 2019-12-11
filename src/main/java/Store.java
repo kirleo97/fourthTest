@@ -3,6 +3,8 @@ public class Store {
     private static final Store store = new Store();
     private int goods = 1000;
     private int maxPurchases;
+    private int minPurchases;
+    private int countOfPurchases;
 
     private Store() {
     }
@@ -15,24 +17,27 @@ public class Store {
 
     public int getMaxPurchases() { return maxPurchases; }
 
-    public void setMaxPurchases(int maxPurchases) { this.maxPurchases = maxPurchases; }
+    public int getMinPurchases() { return minPurchases; }
 
     public void setGoods(int goods) { this.goods = goods; }
 
+    public void setMaxPurchases(int maxPurchases) { this.maxPurchases = maxPurchases; }
+
+    public void setMinPurchases(int minPurchases) { this.minPurchases = minPurchases; }
 
     public void tryToBuy(Consumer consumer, int quantity) {
         if (checkTaskCondition(consumer)) {
             int finalQuantity = checkBalanceOfGoods(quantity);
             changeConsumerDataAfterDeal(consumer, finalQuantity);
             setGoods(getGoods() - finalQuantity);
-            if (consumer.getNumberOfPurchases() >  getMaxPurchases())
-                setMaxPurchases(consumer.getNumberOfPurchases());
+            countOfPurchases++;
+            changeMinAndMaxPurchasesAfterDeal();
             printDeal(consumer, finalQuantity);
         }
     }
 
     public boolean checkTaskCondition(Consumer consumer) {
-        if (consumer.getNumberOfPurchases() - Store.getInstance().getMaxPurchases() > 0) {
+        if (getMaxPurchases() > getMinPurchases() && consumer.getNumberOfPurchases() == getMaxPurchases()) {
             System.out.printf("Потребитель %d не может совершить новую покупку. Система не позволяет\n", consumer.getName());
             return false;
         }
@@ -40,10 +45,9 @@ public class Store {
     }
 
     public int checkBalanceOfGoods(int quantity) {
-        int balanceOfGoods = getGoods();
-        if (quantity > balanceOfGoods) {
-            System.out.printf("Количество требуемого товара меньше остатка на складе. Вы можете купить только %d товаров(а)\n", balanceOfGoods);
-            return balanceOfGoods;
+        if (quantity > getGoods()) {
+            System.out.printf("Количество требуемого товара меньше остатка на складе. Вы можете купить только %d товаров(а)\n", getGoods());
+            return getGoods();
         }
         return quantity;
     }
@@ -53,9 +57,18 @@ public class Store {
         consumer.setNumberOfPurchases(consumer.getNumberOfPurchases() + 1);
     }
 
+    public void changeMinAndMaxPurchasesAfterDeal() {
+        if (getMaxPurchases() == getMinPurchases()) {
+            setMaxPurchases(getMaxPurchases() + 1);
+        }
+        if (countOfPurchases % 10 == 0) {
+            setMinPurchases(getMaxPurchases());
+        }
+    }
+
     public void printDeal(Consumer consumer, int quantity) {
         System.out.println("Потребитель " + consumer.getName() + " купил " + quantity + " товаров(а);");
         System.out.println("Сейчас у него " + consumer.getNumberOfGoods() + " товаров(а) и " + consumer.getNumberOfPurchases() + " покупок(и);");
-        System.out.println("В магазине осталось " + getGoods() + " товаров(а), а максимальное число покупок = " + getMaxPurchases() + "\n");
+        System.out.println("В магазине осталось " + getGoods() + " товаров(а), максимальное число покупок = " + getMaxPurchases() + ", а минимальное = "  + getMinPurchases() + "\n");
     }
 }

@@ -31,13 +31,7 @@ public class Consumer implements Runnable {
                 int quantity = 1 + (int) (Math.random() * 9);
                 store.tryToBuy(this, quantity);
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.out.println("Ошибка! Поток " + Thread.currentThread().getName() + " был прерван во время ожидания.");
-                e.printStackTrace();
-            }
         }
-        System.out.println("\nИТОГО: у производителя " + getName() + " " + getNumberOfGoods() + " товаров(а) и " + getNumberOfPurchases() + " покупок(и)");
+        System.out.println("\nИТОГО: у потребителя " + getName() + " " + getNumberOfGoods() + " товаров(а) и " + getNumberOfPurchases() + " покупок(и)");
     }
 }
